@@ -1,0 +1,242 @@
+<!DOCTYPE html><html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>核心機能①「レシートAI解析」</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script><style>
+        body {width: 1280px; min-height: 720px; overflow: hidden; font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;}
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            
+            background: linear-gradient(135deg, #F0F0F0 0%, #E0E0E0 100%);
+        }
+        .title {
+            font-weight: 700;
+            color: #333;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .process-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .process-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .arrow {
+            color: #4A6FA5;
+            font-size: 24px;
+        }
+        .highlight {
+            color: #4A6FA5;
+            font-weight: 600;
+        }
+        .image-container {
+            position: relative;
+        }
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(152,255,152,0.2) 0%, rgba(255,213,128,0.2) 100%);
+            border-radius: 10px;
+        }
+    
+html {
+    overflow: hidden;
+}</style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-8{margin-bottom:2rem}.mr-2{margin-right:0.5rem}.mt-1{margin-top:0.25rem}.flex{display:flex}.h-24{height:6rem}.h-auto{height:auto}.w-1\/3{width:33.333333%}.w-2\/5{width:40%}.w-3\/5{width:60%}.w-full{width:100%}.flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.rounded-lg{border-radius:0.5rem}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-purple-100{--tw-bg-opacity:1;background-color:rgb(243 232 255 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-purple-100{--tw-gradient-from:#f3e8ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(243 232 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-700{--tw-gradient-from:#7e22ce var(--tw-gradient-from-position);--tw-gradient-to:rgb(126 34 206 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-200{--tw-gradient-to:#e9d5ff var(--tw-gradient-to-position)}.to-purple-900{--tw-gradient-to:#581c87 var(--tw-gradient-to-position)}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-4{padding-left:1rem;padding-right:1rem}.pr-6{padding-right:1.5rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}</style>        <script>
+        // ナビゲーション機能
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = 8;
+            const totalPages = 14;
+            
+            // キーボードナビゲーション
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    if (currentPage < totalPages) {
+                        window.location.href = `page_${currentPage + 1}.html`;
+                    }
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        window.location.href = `page_${currentPage - 1}.html`;
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // クリックナビゲーション（ボタン以外）
+            document.addEventListener('click', function(e) {
+                // ボタンクリックは除外
+                if (e.target.closest('button')) {
+                    return;
+                }
+                
+                const rect = document.documentElement.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const windowWidth = window.innerWidth;
+                
+                if (clickX > windowWidth * 0.7) {
+                    // 右側クリック - 次のページ
+                    if (currentPage < totalPages) {
+                        window.location.href = `page_${currentPage + 1}.html`;
+                    }
+                } else if (clickX < windowWidth * 0.3) {
+                    // 左側クリック - 前のページ
+                    if (currentPage > 1) {
+                        window.location.href = `page_${currentPage - 1}.html`;
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body class="">
+    <!-- ナビゲーションコントロール -->
+    <div class="fixed top-4 right-4 z-50 flex space-x-2">
+        <button onclick="window.location.href='index.html'" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all">
+            <i class="fas fa-home text-gray-700"></i>
+        </button>
+        <button onclick="window.location.href='page_7.html'" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all">
+            <i class="fas fa-arrow-left text-gray-700"></i>
+        </button>
+        <button onclick="window.location.href='page_9.html'" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all">
+            <i class="fas fa-arrow-right text-gray-700"></i>
+        </button>
+    </div>
+    
+    <!-- ページ番号表示 -->
+    <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div class="bg-white bg-opacity-80 rounded-full px-4 py-2 shadow-lg">
+            <span class="text-sm text-gray-700 font-medium">8 / 14</span>
+        </div>
+    </div>
+
+<div class="slide flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="h-24 w-full bg-gradient-to-r from-gray-600 to-gray-800 flex items-center px-10">
+<h1 class="title text-3xl text-white">核心機能①「レシートAI解析」</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-6">
+<!-- Left side: Process flow -->
+<div class="w-3/5 flex flex-col justify-center pr-6">
+<h2 class="text-2xl font-bold mb-4">レシート撮影から自動データ化の流れ</h2>
+<!-- Process flow -->
+<div class="flex items-center mb-8">
+<!-- Step 1 -->
+<div class="process-card p-4 w-1/3">
+<div class="flex flex-col items-center mb-2">
+<div class="icon-circle bg-blue-100 mb-2">
+<i class="fas fa-camera text-xl text-blue-500"></i>
+</div>
+<h3 class="text-lg font-bold text-center">レシート撮影</h3>
+</div>
+<p class="text-sm text-gray-600 text-center">買い物後にレシートをカメラで撮影</p>
+</div>
+<!-- Arrow -->
+<div class="arrow px-4">
+<i class="fas fa-chevron-right"></i>
+</div>
+<!-- Step 2 -->
+<div class="process-card p-4 w-1/3">
+<div class="flex flex-col items-center mb-2">
+<div class="icon-circle bg-green-100 mb-2">
+<i class="fas fa-microchip text-xl text-green-500"></i>
+</div>
+<h3 class="text-lg font-bold text-center">AI解析</h3>
+</div>
+<p class="text-sm text-gray-600 text-center">chatGPTによる画像認識と分析</p>
+</div>
+<!-- Arrow -->
+<div class="arrow px-4">
+<i class="fas fa-chevron-right"></i>
+</div>
+<!-- Step 3 -->
+<div class="process-card p-4 w-1/3">
+<div class="flex flex-col items-center mb-2">
+<div class="icon-circle bg-purple-100 mb-2">
+<i class="fas fa-database text-xl text-purple-500"></i>
+</div>
+<h3 class="text-lg font-bold text-center">自動データ化</h3>
+</div>
+<p class="text-sm text-gray-600 text-center">家計簿への自動反映</p>
+</div>
+</div>
+<!-- Details -->
+<div class="bg-white rounded-lg p-5 shadow-md">
+<h3 class="text-xl font-bold mb-3">chatGPTによる高精度解析の仕組み</h3>
+<ul class="space-y-3">
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+<span>品目、金額、日付、店舗名などの<span class="highlight">情報を瞬時に読み取る</span></span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+<span>商品の<span class="highlight">カテゴリを自動判別</span>し、適切に分類（食費、日用品、外食費など）</span>
+</li>
+<li class="flex items-start">
+<i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+<span>QRコード決済の履歴やオンラインショッピングの購入履歴も<span class="highlight">スクリーンショットから解析</span></span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Right side: Image -->
+<div class="w-2/5 flex flex-col items-center justify-center">
+<div class="image-container mb-4">
+<div class="image-overlay"></div>
+<img alt="レシート撮影" class="rounded-lg shadow-xl w-full h-auto" src="https://picture-search.skywork.ai/aippt/image/sheet/30d4876cfcc2c62fbdef40f03bb4dfd9.jpg" data-sk-source-container="img" data-sk-source-url="https://www.istockphoto.com/photos/scan-receipt-phone" data-sk-source-id="1965978527492128771" sk-source-uniq-id="sk-source-tag-32"/>
+</div>
+<!-- Benefits highlight -->
+<div class="bg-gradient-to-r from-purple-100 to-purple-200 p-4 rounded-lg shadow-md w-full">
+<h3 class="text-lg font-bold mb-2 flex items-center">
+<i class="fas fa-star text-yellow-500 mr-2"></i>
+                        主な利点
+                    </h3>
+<ul class="space-y-2">
+<li class="flex items-center">
+<i class="fas fa-check text-green-500 mr-2"></i>
+<span>手入力の<span class="highlight">手間が劇的に削減</span></span>
+</li>
+<li class="flex items-center">
+<i class="fas fa-check text-green-500 mr-2"></i>
+<span>家計簿の<span class="highlight">継続率が飛躍的に向上</span></span>
+</li>
+<li class="flex items-center">
+<i class="fas fa-check text-green-500 mr-2"></i>
+<span>データの<span class="highlight">正確性と一貫性</span>が確保</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

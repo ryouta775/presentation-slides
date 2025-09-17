@@ -1,0 +1,295 @@
+<!DOCTYPE html><html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>核心機能③「家計分析」</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script><style>
+        body {width: 1280px; min-height: 720px; overflow: hidden; font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;}
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            
+            background: linear-gradient(135deg, #F0F0F0 0%, #E0E0E0 100%);
+        }
+        .title {
+            font-weight: 700;
+            color: #333;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .feature-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .highlight {
+            color: #4A6FA5;
+            font-weight: 600;
+        }
+        .chart-container {
+            height: 200px;
+            width: 100%;
+        }
+    
+html {
+    overflow: hidden;
+}</style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mb-1{margin-bottom:0.25rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.ml-4{margin-left:1rem}.mr-3{margin-right:0.75rem}.mt-4{margin-top:1rem}.flex{display:flex}.h-16{height:4rem}.h-24{height:6rem}.h-full{height:100%}.w-1\/2{width:50%}.w-full{width:100%}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.bg-orange-100{--tw-bg-opacity:1;background-color:rgb(255 237 213 / var(--tw-bg-opacity, 1))}.bg-purple-100{--tw-bg-opacity:1;background-color:rgb(243 232 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-purple-700{--tw-gradient-from:#7e22ce var(--tw-gradient-from-position);--tw-gradient-to:rgb(126 34 206 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-900{--tw-gradient-from:#581c87 var(--tw-gradient-from-position);--tw-gradient-to:rgb(88 28 135 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-700{--tw-gradient-to:#7e22ce var(--tw-gradient-to-position)}.to-purple-900{--tw-gradient-to:#581c87 var(--tw-gradient-to-position)}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-10{padding-left:2.5rem;padding-right:2.5rem}.pl-6{padding-left:1.5rem}.pr-6{padding-right:1.5rem}.text-center{text-align:center}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}</style>        <script>
+        // ナビゲーション機能
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = 10;
+            const totalPages = 14;
+            
+            // キーボードナビゲーション
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    if (currentPage < totalPages) {
+                        window.location.href = `page_${currentPage + 1}.html`;
+                    }
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        window.location.href = `page_${currentPage - 1}.html`;
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // クリックナビゲーション（ボタン以外）
+            document.addEventListener('click', function(e) {
+                // ボタンクリックは除外
+                if (e.target.closest('button')) {
+                    return;
+                }
+                
+                const rect = document.documentElement.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const windowWidth = window.innerWidth;
+                
+                if (clickX > windowWidth * 0.7) {
+                    // 右側クリック - 次のページ
+                    if (currentPage < totalPages) {
+                        window.location.href = `page_${currentPage + 1}.html`;
+                    }
+                } else if (clickX < windowWidth * 0.3) {
+                    // 左側クリック - 前のページ
+                    if (currentPage > 1) {
+                        window.location.href = `page_${currentPage - 1}.html`;
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body class="">
+    <!-- ナビゲーションコントロール -->
+    <div class="fixed top-4 right-4 z-50 flex space-x-2">
+        <button onclick="window.location.href='index.html'" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all">
+            <i class="fas fa-home text-gray-700"></i>
+        </button>
+        <button onclick="window.location.href='page_9.html'" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all">
+            <i class="fas fa-arrow-left text-gray-700"></i>
+        </button>
+        <button onclick="window.location.href='page_11.html'" class="bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all">
+            <i class="fas fa-arrow-right text-gray-700"></i>
+        </button>
+    </div>
+    
+    <!-- ページ番号表示 -->
+    <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div class="bg-white bg-opacity-80 rounded-full px-4 py-2 shadow-lg">
+            <span class="text-sm text-gray-700 font-medium">10 / 14</span>
+        </div>
+    </div>
+
+<div class="slide flex flex-col" style=" overflow: hidden;">
+<!-- Header with title -->
+<div class="h-24 w-full bg-gradient-to-r from-gray-600 to-gray-800 flex items-center px-10">
+<h1 class="title text-3xl text-white">核心機能③「家計分析」</h1>
+</div>
+<!-- Main content -->
+<div class="flex flex-1 p-8">
+<!-- Left side: Introduction and features -->
+<div class="w-1/2 pr-6">
+<div class="mb-6">
+<p class="text-lg text-gray-700">本アプリの「家計分析」機能は、記録された支出データを単なる数字の羅列ではなく、視覚的に美しく、かつ分かりやすい形で提示します。これにより、家計の傾向や変化を直感的に捉えることができます。</p>
+</div>
+<!-- Features list -->
+<div class="space-y-4">
+<!-- Feature 1 -->
+<div class="feature-card p-4 flex items-start">
+<div class="icon-circle bg-mint-100 flex-shrink-0">
+<i class="fas fa-chart-pie text-xl text-green-600"></i>
+</div>
+<div class="ml-4">
+<h3 class="text-lg font-bold mb-1">円グラフでカテゴリ別支出割合を視覚化</h3>
+<p class="text-gray-600">各カテゴリの支出割合を一目で把握し、「今月は食費が多かったな」といった傾向をすぐに発見できます。</p>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="feature-card p-4 flex items-start">
+<div class="icon-circle bg-orange-100 flex-shrink-0">
+<i class="fas fa-chart-bar text-xl text-orange-500"></i>
+</div>
+<div class="ml-4">
+<h3 class="text-lg font-bold mb-1">棒グラフや折れ線グラフで月ごとの支出推移を比較</h3>
+<p class="text-gray-600">月ごとの支出推移をグラフ化することで、「交通費が先月より増えている」といった変化を直感的に理解できます。</p>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="feature-card p-4 flex items-start">
+<div class="icon-circle bg-purple-100 flex-shrink-0">
+<i class="fas fa-search-plus text-xl text-purple-600"></i>
+</div>
+<div class="ml-4">
+<h3 class="text-lg font-bold mb-1">特定のカテゴリを深掘り分析</h3>
+<p class="text-gray-600">特定のカテゴリを選択して詳細な支出内訳を確認したり、過去のデータと比較して節約効果を実感したりできます。</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right side: Chart visualization -->
+<div class="w-1/2 pl-6">
+<div class="feature-card p-6 h-full flex flex-col">
+<h3 class="text-xl font-bold mb-4 text-center">家計データの「見える化」による洞察の獲得</h3>
+<!-- Chart area -->
+<div class="flex-1 flex flex-col">
+<!-- Sample visualization -->
+<div class="chart-container mb-4" id="chart"></div>
+<!-- Benefit points -->
+<div class="mt-4 space-y-3">
+<div class="flex items-center">
+<i class="fas fa-lightbulb text-yellow-500 mr-3"></i>
+<p class="text-gray-700">「見える化」によって、自身の消費行動を<span class="highlight">客観的に分析</span>できます</p>
+</div>
+<div class="flex items-center">
+<i class="fas fa-filter text-green-500 mr-3"></i>
+<p class="text-gray-700">無駄な出費を<span class="highlight">特定</span>し、より賢いお金の使い方を計画できます</p>
+</div>
+<div class="flex items-center">
+<i class="fas fa-bullseye text-red-500 mr-3"></i>
+<p class="text-gray-700">節約目標を<span class="highlight">実現</span>するための具体な方向性が得られます</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<div class="h-16 w-full bg-gradient-to-r from-gray-800 to-gray-600 flex items-center justify-center px-10">
+<p class="text-white text-center">この「見える化」機能が、あなたの家計管理を<span class="highlight">質感的に向上</span>します</p>
+</div>
+</div>
+<script>
+        // Simple D3.js visualization for demonstration
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample data for pie chart (generic budget categories)
+            const data = [
+                { category: "食費", value: 30 },
+                { category: "交通", value: 20 },
+                { category: "住居", value: 25 },
+                { category: "エンターテインメント", value: 15 },
+                { category: "教育", value: 10 }
+            ];
+            
+            // Set up dimensions
+            const width = document.getElementById('chart').clientWidth;
+            const height = document.getElementById('chart').clientHeight;
+            const radius = Math.min(width, height) / 2;
+            
+            // Create SVG
+            const svg = d3.select("#chart")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", `translate(${width / 2}, ${height / 2})`);
+            
+            // Set up color scale
+            const color = d3.scaleOrdinal()
+                .domain(data.map(d => d.category))
+                .range(["#98FF98", "#FFD580", "#8A2BE2", "#FF6B6B", "#4ECDC4"]);
+            
+            // Set up pie chart
+            const pie = d3.pie()
+                .value(d => d.value);
+            
+            const arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius * 0.8);
+            
+            const outerArc = d3.arc()
+                .innerRadius(radius * 0.9)
+                .outerRadius(radius * 0.9);
+            
+            // Draw pie segments
+            const arcs = svg.selectAll("arc")
+                .data(pie(data))
+                .enter()
+                .append("g")
+                .attr("class", "arc");
+            
+            arcs.append("path")
+                .attr("d", arc)
+                .attr("fill", d => color(d.data.category))
+                .attr("stroke", "white")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.8);
+            
+            // Add labels
+            arcs.append("text")
+                .attr("transform", d => {
+                    const pos = outerArc.centroid(d);
+                    const midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                    pos[0] = radius * 0.7 * (midAngle < Math.PI ? 1 : -1);
+                    return `translate(${pos})`;
+                })
+                .attr("dy", ".35em")
+                .style("text-anchor", d => {
+                    const midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                    return midAngle < Math.PI ? "start" : "end";
+                })
+                .text(d => `${d.data.category} ${d.data.value}%`)
+                .style("font-size", "12px")
+                .style("fill", "#333");
+            
+            // Add polylines between pie and labels
+            arcs.append("polyline")
+                .attr("points", d => {
+                    const pos = outerArc.centroid(d);
+                    const midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2;
+                    pos[0] = radius * 0.7 * (midAngle < Math.PI ? 1 : -1);
+                    return [arc.centroid(d), outerArc.centroid(d), pos];
+                })
+                .style("fill", "none")
+                .style("stroke", "#999")
+                .style("stroke-width", "1px");
+        });
+    </script>
+
+</body></html>
